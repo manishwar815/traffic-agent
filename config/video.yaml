@@ -1,0 +1,60 @@
+# Traffic Agent configuration - real video mode (YOLO26n on CPU)
+# One feed per approach. Until you have junction footage, the sample clips
+# from scripts/download_models.py stand in (the same clip may be reused with
+# a different start_frame for several approaches).
+
+mode: video
+
+junction:
+  name: "Video Test Junction"
+  location: {lat: 17.4486, lon: 78.3908}
+
+sources:
+  N: {type: file, path: data/videos/vehicles_720p.mp4, loop: true, start_frame: 0, zones: config/zones/N.json}
+  E: {type: file, path: data/videos/car-detection.mp4, loop: true, start_frame: 0, zones: config/zones/E.json}
+  S: {type: file, path: data/videos/vehicles-2.mp4, loop: true, start_frame: 0, zones: config/zones/S.json}
+  W: {type: file, path: data/videos/person-bicycle-car-detection.mp4, loop: true, start_frame: 0, zones: config/zones/W.json}
+  # Webcam:  N: {type: webcam, path: "0"}
+  # IP cam:  N: {type: rtsp, path: "rtsp://user:pass@192.168.1.20:554/stream1"}
+
+detector:
+  model: models/yolo26n.onnx
+  input_size: 640
+  conf: 0.25
+  classes: [1, 2, 3, 5, 7]      # bicycle, car, motorcycle, bus, truck (COCO ids)
+  every_n_frames: 2             # YOLO on every 2nd frame per camera (staggered); tracker fills the gaps
+  threads: 4
+
+tracker:
+  high_thresh: 0.5
+  low_thresh: 0.1
+  new_track_thresh: 0.45
+  match_iou: 0.2
+  max_lost: 20
+  min_hits: 3
+
+analysis:
+  queue_speed_kmph: 5
+  speed_window_s: 1.0
+
+signal:
+  controller: adaptive          # "fixed" = old 20s round-robin
+  phase_order: [N, E, S, W]
+  fixed: {green_s: 20, amber_s: 3, all_red_s: 1}
+  adaptive: {min_green_s: 8, max_green_s: 45, per_vehicle_s: 2.5, max_red_s: 90, amber_s: 3, all_red_s: 1}
+  arduino: {enabled: false, port: /dev/ttyACM0, baud: 115200}   # real LEDs, see hardware/
+
+emergency:                      # priority green for ambulances / fire trucks
+  enabled: true
+  max_hold_s: 60                # safety cap per request
+  lost_grace_s: 2
+  manual_hold_s: 20             # dashboard "Emergency" button (stand-in for GPS / RFID / operator)
+
+storage:
+  db_path: data/traffic_video.db
+  evidence_dir: evidence
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  jpeg_quality: 70

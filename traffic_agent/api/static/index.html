@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Traffic Agent - Control Room</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true"></span>
+    <div>
+      <h1>Traffic Agent</h1>
+      <p id="junction">Connecting...</p>
+    </div>
+  </div>
+  <div class="meta">
+    <span class="pill" id="mode">-</span>
+    <span class="meta-item"><b>Detector</b> <span id="detector">-</span></span>
+    <span class="meta-item"><b>Clock</b> <span id="clock" class="mono">-</span></span>
+    <span class="meta-item" title="How many frames per second the pipeline could process right now"><b>Compute</b> <span id="fps" class="mono">-</span></span>
+    <span class="conn" id="conn" title="Live connection">offline</span>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="feeds" id="feeds" aria-label="Approach cameras"></section>
+
+  <aside class="side">
+    <div class="card" id="overview-card" hidden>
+      <div class="card-h"><h2>Junction overview</h2><span class="hint">simulator</span></div>
+      <img id="overview" class="overview" alt="Top-down view of the junction">
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h2>Signal control</h2><span class="hint" id="ctl-name">-</span></div>
+      <div class="signal-row" id="signal-row"></div>
+      <div class="phase">
+        <div><span class="label">Green now</span><span id="ctl-current" class="big">-</span></div>
+        <div><span class="label">Stage</span><span id="ctl-stage" class="big">-</span></div>
+        <div><span class="label">Remaining</span><span id="ctl-remaining" class="big mono">-</span></div>
+      </div>
+    </div>
+
+    <div class="card" id="emg-card">
+      <div class="card-h"><h2>Emergency priority</h2><span class="hint" id="emg-served">-</span></div>
+      <p class="emg-status" id="emg-status">No emergency vehicle</p>
+      <div class="emg-row">
+        <span class="label" id="emg-label">Priority green</span>
+        <div class="emg-btns" id="emg-btns"></div>
+      </div>
+    </div>
+
+    <div class="card" id="demo-card" hidden>
+      <div class="card-h"><h2>Demo events</h2><span class="hint">simulator</span></div>
+      <div class="demo-btns" id="demo-btns">
+        <button class="btn" data-k="red_light">Red-light jumper</button>
+        <button class="btn" data-k="wrong_way">Wrong-way driver</button>
+        <button class="btn" data-k="no_helmet">No helmet</button>
+        <button class="btn" data-k="speeding">Speeder</button>
+        <button class="btn danger" data-k="crash">Crash</button>
+      </div>
+      <p class="hint demo-msg" id="demo-msg" aria-live="polite"></p>
+    </div>
+
+    <div class="card" id="enf-card">
+      <div class="card-h"><h2>Enforcement</h2><span class="hint" id="enf-total">-</span></div>
+      <div class="vio-grid" id="vio-grid"></div>
+      <p class="hint rules" id="enf-rules"></p>
+      <ul class="challans" id="challans"><li class="empty">No challans yet</li></ul>
+    </div>
+
+    <div class="card" id="inc-card">
+      <div class="card-h"><h2>Incidents</h2><span class="hint" id="inc-alerts">-</span></div>
+      <ul class="incidents" id="incidents"><li class="empty">No collisions detected</li></ul>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h2>Approach load</h2><span class="hint">live</span></div>
+      <table class="stats">
+        <thead><tr><th>Approach</th><th>In lane</th><th>Queue</th><th>Occupancy</th><th>Flow/min</th></tr></thead>
+        <tbody id="stats-body"></tbody>
+      </table>
+      <div class="simstats" id="simstats" hidden></div>
+    </div>
+
+    <div class="card log-card">
+      <div class="card-h"><h2>Event log</h2><span class="hint" id="ev-count">0</span></div>
+      <ol class="log" id="log"></ol>
+    </div>
+  </aside>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

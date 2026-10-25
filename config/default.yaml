@@ -1,0 +1,55 @@
+# Traffic Agent configuration - simulator mode (default demo)
+# Every threshold lives here. Unknown keys are rejected at startup.
+
+mode: sim                       # sim | video
+
+junction:
+  name: "Demo Junction, Madhapur, Hyderabad"
+  location: {lat: 17.4486, lon: 78.3908}     # sent with ambulance alerts (Phase 2d)
+
+sim:
+  seed: 42
+  fps: 10                       # simulation ticks per second
+  realtime: true                # false = as fast as possible (for measurements)
+  arrivals_per_min: {N: 9, E: 3, S: 6, W: 2}     # unequal on purpose: North overloads under fixed timing
+  vehicle_mix: {car: 0.5, motorcycle: 0.3, bus: 0.08, truck: 0.12}
+  emergency_per_hour: 6         # random ambulances with siren, any approach (0 = only via dashboard buttons)
+  speed_limit_kmph: 50
+  arm_length_m: 80
+  view_width: 640
+  view_height: 360
+  px_per_m: 12
+
+tracker:
+  high_thresh: 0.5
+  low_thresh: 0.1
+  new_track_thresh: 0.5
+  match_iou: 0.2
+  max_lost: 15
+  min_hits: 2
+
+analysis:
+  queue_speed_kmph: 5           # slower than this inside the lane = queued
+  speed_window_s: 1.0
+
+signal:
+  controller: adaptive          # "fixed" = old 20s round-robin
+  phase_order: [N, E, S, W]
+  fixed: {green_s: 20, amber_s: 3, all_red_s: 1}
+  adaptive: {min_green_s: 8, max_green_s: 45, per_vehicle_s: 2.5, max_red_s: 90, amber_s: 3, all_red_s: 1}
+  arduino: {enabled: false, port: /dev/ttyACM0, baud: 115200}   # real LEDs, see hardware/
+
+emergency:                      # priority green for ambulances / fire trucks
+  enabled: true
+  max_hold_s: 60                # safety cap per request
+  lost_grace_s: 2
+  manual_hold_s: 20             # dashboard "Emergency" button (stand-in for GPS / RFID / operator)
+
+storage:
+  db_path: data/traffic.db
+  evidence_dir: evidence
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  jpeg_quality: 70

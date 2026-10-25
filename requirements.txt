@@ -1,0 +1,15 @@
+# Runtime (CPU only, no PyTorch needed: all models run through ONNX Runtime)
+numpy>=1.26
+opencv-python>=4.9        # GUI build: needed by scripts/draw_zones.py
+onnxruntime>=1.18
+scipy>=1.11               # Hungarian matching in the tracker
+pyyaml>=6.0
+pydantic>=2.6
+starlette>=0.37           # web dashboard (the framework FastAPI is built on)
+uvicorn>=0.29
+requests>=2.31            # Telegram alerts (Phase 2+)
+reportlab>=4.0            # e-challan PDFs (Phase 2+)
+pyserial>=3.5             # optional: Arduino traffic-light LEDs (signal.arduino)
+
+# Dev / tests
+pytest>=8.0
